@@ -9,10 +9,27 @@
         <title>PrimeFaces Test</title>
     </h:head>
     <h:body>
-
-        <h1>#{testView.testString}</h1>
-
-        <h1>#{testViewCdi.testString}</h1>
-
+        <h:form id="f-form" styleClass="someClass" >
+			<p:panel id="p-pane">
+				<p:dataTable editable="true" editMode="cell" id="fields" var="field" widgetVar="fieldsTable" value="#{defaultBean.fields}" emptyMessage="#{messages['noData']}"
+					         selectionMode="single" selection="#{defaultBean.fields}" rowKey="#{defaultBean.fields}">
+					<p:ajax event="cellEdit" listener="#{defaultBean.onCellEdit}"  />
+			
+					<p:columns id="column-id" value="#{defaultBean.columns}" var="column" filterMatchMode="contains">
+						<f:facet name="header">
+								<h:outputText value="NAME" title="NAME" />
+						</f:facet>
+						<p:cellEditor id="cell-editor">
+						    <f:facet name="output">
+								<p:outputLabel id="outField" value="#{defaultBean.fields.get(0)}" />
+						    </f:facet>
+						    <f:facet name="input">
+								<p:inputText id="inField" value="#{defaultBean.fields.get(0)}" validatorMessage="The format should be: ^([A-Z 0-9])+$" />
+						    </f:facet>
+						</p:cellEditor>
+					</p:columns>
+				</p:dataTable>
+			</p:panel>
+		</h:form>
     </h:body>
 </html>
