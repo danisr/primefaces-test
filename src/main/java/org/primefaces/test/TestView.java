@@ -9,18 +9,48 @@ import javax.faces.bean.ViewScoped;
 @ViewScoped
 public class TestView implements Serializable {
     
-    private String testString;
+    private String originField;
+    private List<String> fields;
+    private List<String> columns;
+    private String regex;
     
     @PostConstruct  
-    public void init() {
-        testString = "Welcome to PrimeFaces!!!";
+    public void init(){
+        originField = "STRING";
+        fields = new ArrayList<String>();
+        fields.add(originField);
+        columns = new ArrayList<String>();
+        columns.add("NAME");
+        regex = "^([A-Z 0-9])+$";
+    }
+          
+    public void onCellEdit(CellEditEvent event) {
+        FacesMessage message = null;
+
+        if(validator()) { /* VALID */
+
+            //SAVE to DataBase.
+
+        }else { /* NOT VALID */
+            fields.clear();
+            fields.add(originField);
+            message = new FacesMessage(localeBean.getBundle("pattern.validator") + regex);
+        }
+
+        RequestContext.getCurrentInstance().update("f-form:fields");
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public String getTestString() {
-        return testString;
-    }
+    public boolean validator() {    	
+        boolean validator = true;
 
-    public void setTestString(String testString) {
-        this.testString = testString;
-    }    
+        String expressionToMatch = fields.get(0);
+        Pattern pat = Pattern.compile(regex);
+        Matcher mat = pat.matcher(expressionToMatch);
+
+        if(!mat.matches()) { /* REGEX not valid */
+            validator = false; 
+        }
+        return validator;
+    }
 }
